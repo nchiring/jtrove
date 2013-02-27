@@ -70,7 +70,7 @@ public class CycleDetector {
 			return cycle=false;
 		}
 		visited.clear();
-		dfs(cls, includeStaticField);
+		dfs(cls);
 		return cycle;
 		
 	}
@@ -81,7 +81,7 @@ public class CycleDetector {
 	 * @param clazz
 	 * @param staticField
 	 */
-	private void dfs(Class<?> clazz, boolean staticField){
+	private void dfs(Class<?> clazz){
 		   if(cycle){
 			   return;
 		   }
@@ -96,7 +96,7 @@ public class CycleDetector {
 		   		   
 		   for( Field f: fields ){
 			   
-			    if( !staticField && Modifier.isStatic(f.getModifiers() ) ){
+			    if( !this.includeStaticField && Modifier.isStatic(f.getModifiers() ) ){
 					  continue;
 				}
 			   
@@ -107,13 +107,13 @@ public class CycleDetector {
 			        childCls= (Class<?>) pType.getActualTypeArguments()[0];
 			        Class<?> rawCls = (Class<?>) pType.getRawType();
 			        if( !isExcludable(rawCls) ){
-						   dfs(childCls, staticField);
+						   dfs(rawCls);
 					}
 			    } else {
 			    	childCls = f.getType();
 			    }
 			    if( !isExcludable(childCls) ){
-			    	dfs(childCls, staticField);
+			    	dfs(childCls);
 			    }
 			    
 		   }
